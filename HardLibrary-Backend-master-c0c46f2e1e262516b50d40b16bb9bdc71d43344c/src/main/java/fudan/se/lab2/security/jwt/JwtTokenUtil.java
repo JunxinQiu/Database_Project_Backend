@@ -1,12 +1,15 @@
 package fudan.se.lab2.security.jwt;
 
 import fudan.se.lab2.domain.Employee;
+import fudan.se.lab2.service.Utility;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,13 +24,19 @@ import java.util.function.Function;
  */
 @Component
 public class JwtTokenUtil implements Serializable {
+    @Resource
+    private JdbcTemplate jdbcTemplate;//自动分析使用数据库
+    private Utility utility;
 
     private static final long serialVersionUID = -3839549913040578986L;
 
     private JwtConfigProperties jwtConfigProperties;
 
-    public JwtTokenUtil(JwtConfigProperties jwtConfigProperties) {
+
+
+    public JwtTokenUtil(JwtConfigProperties jwtConfigProperties,Utility utility) {
         this.jwtConfigProperties = jwtConfigProperties;
+        this.utility = utility;
     }
 
     public String generateToken(Employee employee) {
@@ -37,6 +46,22 @@ public class JwtTokenUtil implements Serializable {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getValidity()))
                 .signWith(SignatureAlgorithm.HS512, jwtConfigProperties.getSecret()).compact();
+    }
+
+    public Employee getEmployeeFromToken(String token) {
+        String username = this.getUsernameFromToken(token);
+        //sql:SELECT * FROM `employee` WHERE `username` = ''
+        Employee employee = utility.findEmployeeByUsername(username);
+        if (validateEmployeeToken(token,employee)){
+            return employee;
+        }else{
+            return null;
+        }
+    }
+
+    public boolean validateEmployeeToken(String jwtToken, Employee employee) {
+        final String username = getUsernameFromToken(jwtToken);
+        return (username.equals(employee.getUsername()) && !isTokenExpired(jwtToken));
     }
 
     public String getUsernameFromToken(String jwtToken) {

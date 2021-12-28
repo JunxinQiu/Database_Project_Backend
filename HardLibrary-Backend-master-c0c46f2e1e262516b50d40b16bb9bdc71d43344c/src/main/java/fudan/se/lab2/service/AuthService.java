@@ -30,7 +30,6 @@ public class AuthService {
 //    public JSONObject login(User user) throws JSONException {
 //        // TODO: Implement the function.
 //        String str=String.format("{username: %s, fullname: %s}",user.getUsername(),user.getFullname());
-//        //辨别用户是否是管理员，老师，学生，还没有写
 //        return new JSONObject(str);
 //    }
 
