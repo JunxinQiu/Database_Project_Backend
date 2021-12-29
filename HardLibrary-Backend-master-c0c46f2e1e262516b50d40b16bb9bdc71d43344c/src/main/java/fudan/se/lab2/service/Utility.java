@@ -28,7 +28,7 @@ public class Utility {
                 employee.setName(resultSet.getString("name"));
                 employee.setAge(resultSet.getInt("age"));
                 employee.setDepartment(resultSet.getString("department"));
-                employee.setEmail(resultSet.getString("mail"));
+                employee.setEmail(resultSet.getString("email"));
                 employee.setEmployDate(resultSet.getString("employ_date"));
                 employee.setLocation(resultSet.getString("location"));
                 employee.setSex(resultSet.getString("sex"));

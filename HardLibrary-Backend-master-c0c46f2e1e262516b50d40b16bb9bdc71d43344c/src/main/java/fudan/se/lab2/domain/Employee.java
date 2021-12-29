@@ -124,7 +124,7 @@ public class Employee implements Serializable {
         return true;
     }
 
-    public long intId() {
+    public long getId() {
         return id;
     }
 

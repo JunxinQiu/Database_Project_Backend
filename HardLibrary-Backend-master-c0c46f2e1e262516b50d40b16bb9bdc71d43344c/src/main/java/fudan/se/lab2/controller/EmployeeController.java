@@ -3,6 +3,7 @@ package fudan.se.lab2.controller;
 import fudan.se.lab2.domain.Employee;
 import fudan.se.lab2.security.jwt.JwtTokenUtil;
 import fudan.se.lab2.service.AuthService;
+import fudan.se.lab2.service.EmployeeService;
 import fudan.se.lab2.service.Utility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import java.util.Map;
 public class EmployeeController {
 
     private AuthService authService;
+    private EmployeeService employeeService;
     private Utility utility;
     private JwtTokenUtil jwtTokenUtil;//可能有bug
     Logger logger = LoggerFactory.getLogger(EmployeeController.class);
@@ -36,10 +38,11 @@ public class EmployeeController {
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
-    public EmployeeController(AuthService authService, Utility utility, JwtTokenUtil jwtTokenUtil) {
+    public EmployeeController(AuthService authService, Utility utility,EmployeeService employeeService,JwtTokenUtil jwtTokenUtil) {
         this.authService = authService;
         this.utility = utility;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.employeeService = employeeService;
     }
 
 
@@ -87,18 +90,61 @@ public class EmployeeController {
     }
 
     //员工修改个人信息
-    @PostMapping("/updateemployeeinfo")
+    @PostMapping("/updateselfinfo")
     @ResponseBody
-    public ResponseEntity<?> updateEmployeeInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+    public ResponseEntity<?> updateSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
         String token = headers.get("authorization");
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
-        return null;
+        //暂时不允许修改username
+        //String username = request.get("username");
+        String password = request.get("password");
+        //不允许修改name
+        String email = request.get("email");
+        //不允许修改type
+        int age = Integer.parseInt(request.get("age"));
+        //不允许修改id
+        //不允许自己修改自己的部门
+        String location = request.get("location");
+        String sex = request.get("sex");
+        //不允许修改入职日期
+        String telephoneNumber = request.get("telephoneNumber");
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber));
     }
+
+    //教员创建新课程,未完成
+    @PostMapping("/createlesson")
+    @ResponseBody
+    public ResponseEntity<?> CreateLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        if(employee.getType().equals("teacher")){
+            //暂时不允许修改username
+            //String username = request.get("username");
+            String password = request.get("password");
+            //不允许修改name
+            String email = request.get("email");
+            //不允许修改type
+            int age = Integer.parseInt(request.get("age"));
+            //不允许修改id
+            //不允许自己修改自己的部门
+            String location = request.get("location");
+            String sex = request.get("sex");
+            //不允许修改入职日期
+            String telephoneNumber = request.get("telephoneNumber");
+            return ResponseEntity.status(HttpStatus.CREATED).body("创建成功");
+        } else{
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("您没有对应权限");
+        }
+
+        //return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber));
+    }
+
+
     /**
      * This is a function to test your connectivity. (健康测试时，可能会用到它）.
      */
     @GetMapping("/welcome")
-    public ResponseEntity<?> welcome(){
+    public ResponseEntity<?> welcome() {
         Map<String, String> response = new HashMap<>();
         String message = "Welcome to 2021 Software Engineering Lab2. ";
         response.put("message", message);

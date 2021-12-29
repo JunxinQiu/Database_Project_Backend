@@ -36,8 +36,10 @@ public class EmployeeService {
     this.utility = utility;
     }
 
-    public String updateSelfInfo(){
-        return "not done";
+    public String updateInfo(long id,String password,String email,int age, String location,String sex,String telephoneNumber) {
+        String sql = "UPDATE `employee` SET `password` = '"+password+"', `sex` = '"+sex+"', `telephone_number` = '"+telephoneNumber+"', `age` = '"+age+"', `location` = '"+location+"', `email` = '"+email+"' WHERE `employee`.`id` = "+id;
+        jdbcTemplate.update(sql);
+        return "修改成功";
     }
 
 
