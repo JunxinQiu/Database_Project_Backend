@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +110,9 @@ public class EmployeeController {
         String sex = request.get("sex");
         //不允许修改入职日期
         String telephoneNumber = request.get("telephoneNumber");
-        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber));
+        String result = employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber);
+        String updateLog = utility.updateLog(employee.getUsername(),"update personal info", utility.getCurrentDate());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     //教员创建新课程,未完成
