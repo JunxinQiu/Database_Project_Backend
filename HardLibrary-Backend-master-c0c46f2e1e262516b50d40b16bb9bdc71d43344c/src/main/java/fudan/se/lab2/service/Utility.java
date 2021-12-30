@@ -1,7 +1,6 @@
 package fudan.se.lab2.service;
 
 import fudan.se.lab2.domain.Employee;
-import fudan.se.lab2.domain.LogHistory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -75,36 +72,4 @@ public class Utility {
             return null;
         }
     }
-
-    //查看log所需的方法
-    public List<LogHistory> checkLog(){
-        String sql = "SELECT * FROM `log_history`";
-        List<LogHistory> logHistoryList = jdbcTemplate.query(sql, new RowMapper<LogHistory>() {
-            LogHistory logHistory;
-            @Override
-            public LogHistory mapRow(ResultSet resultSet, int i) throws SQLException {
-                logHistory = new LogHistory();
-                logHistory.setLog(resultSet.getString("log"));
-                logHistory.setUsername(resultSet.getString("username"));
-                logHistory.setId(resultSet.getLong("id"));
-                logHistory.setDate(resultSet.getString("date"));
-                return logHistory;
-            }
-        });
-        return logHistoryList;
-    }
-
-    //更新log_history表
-    public String updateLog(String username,String log,String date){
-        String sql = "INSERT INTO `log_history` (`username`, `log`, `date`) VALUES ('"+username+"', '"+log+"', '"+date+"')";
-        jdbcTemplate.update(sql);
-        return "log已经运行，在正确的输入下理论上会获得正确的结果";
-    }
-
-    public String getCurrentDate(){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        return df.format(new Date());
-    }
-
-
 }
