@@ -13,20 +13,14 @@ public class Lesson {
     private long teacherId;
     private String description;
     private String genre;
-    @Column(name="available_department")
-    private String availableDepartment;
-    @Column(name="required_department")
-    private String requiredDepartment;
 
     public Lesson(){}
-    public Lesson(int id,String name,long teacherId,String description,String genre,String availableDepartment,String requiredDepartment){
-        this.availableDepartment=availableDepartment;
+    public Lesson(int id,String name,long teacherId,String description,String genre){
         this.id = id;
         this.name = name;
         this.teacherId = teacherId;
         this.description = description;
         this.genre = genre;
-        this.requiredDepartment = requiredDepartment;
     }
 
 
@@ -70,21 +64,5 @@ public class Lesson {
 
     public void setGenre(String genre) {
         this.genre = genre;
-    }
-
-    public String getAvailableDepartment() {
-        return availableDepartment;
-    }
-
-    public void setAvailableDepartment(String availableDepartment) {
-        this.availableDepartment = availableDepartment;
-    }
-
-    public String getRequiredDepartment() {
-        return requiredDepartment;
-    }
-
-    public void setRequiredDepartment(String requiredDepartment) {
-        this.requiredDepartment = requiredDepartment;
     }
 }

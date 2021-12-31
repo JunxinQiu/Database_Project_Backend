@@ -53,32 +53,7 @@ public class EmployeeController {
     @PostMapping("/login")
     @ResponseBody
     public ResponseEntity<?> login(@RequestBody Map<String,String> request) throws JSONException {
-        logger.debug("LoginForm: " + request.toString());
-        List<Employee> userList = jdbcTemplate.query("SELECT * FROM employee ",new RowMapper<Employee>() {
-            Employee employee = null;
-            @Override
-            public Employee mapRow(ResultSet rs, int rowNum) throws SQLException {
-                employee = new Employee();
-                employee.setId(rs.getLong("id"));
-                employee.setPassword(rs.getString("password"));
-                employee.setUsername(rs.getString("username"));
-                return employee;
-            }
-        });
-        boolean login=false;
-        String token = "";
-        for (Employee employee : userList) {
-            if (employee.getUsername().equals(request.get("username"))&&employee.getPassword().equals(request.get("password"))) {
-                login=true;
-                token = jwtTokenUtil.generateToken(employee);
-                break;
-            }
-        }
-        if (login){
-            return ResponseEntity.status(HttpStatus.CREATED).body(token);
-        }else {
-            return ResponseEntity.status(HttpStatus.CREATED).body("false");
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.login(request.get("username"),request.get("password")));
     }
 
     //员工查看自己的信息
@@ -116,32 +91,12 @@ public class EmployeeController {
     }
 
     //教员创建新课程,未完成
-    @PostMapping("/createlesson")
-    @ResponseBody
-    public ResponseEntity<?> CreateLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
-        String token = headers.get("authorization");
-        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
-        if(employee.getType().equals("teacher")){
-            //暂时不允许修改username
-            //String username = request.get("username");
-            String password = request.get("password");
-            //不允许修改name
-            String email = request.get("email");
-            //不允许修改type
-            int age = Integer.parseInt(request.get("age"));
-            //不允许修改id
-            //不允许自己修改自己的部门
-            String location = request.get("location");
-            String sex = request.get("sex");
-            //不允许修改入职日期
-            String telephoneNumber = request.get("telephoneNumber");
-            return ResponseEntity.status(HttpStatus.CREATED).body("创建成功");
-        } else{
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("您没有对应权限");
-        }
-
-        //return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber));
-    }
+//    @PostMapping("/createlesson")
+//    @ResponseBody
+//    public ResponseEntity<?> CreateLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+//        String token = headers.get("authorization");
+//        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+//    }
 
 
     /**

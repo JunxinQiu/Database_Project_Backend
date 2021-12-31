@@ -21,7 +21,6 @@ public class Employee implements Serializable {
     private String password;
     private String name;
     private String email;
-    private String type;
     private String department;
     private String sex;
     private String location;
@@ -35,12 +34,11 @@ public class Employee implements Serializable {
     public Employee() {}
 
 
-    public Employee(int id,int age,String username, String password, String name, String type,String email,String department,String sex,String employDate,String location,String telephoneNumber) {
+    public Employee(int id,int age,String username, String password, String name,String email,String department,String sex,String employDate,String location,String telephoneNumber) {
         this.username = username;
         this.password= password;
         this.name = name;
         this.email=email;
-        this.type=type;
         this.age=age;
         this.id =id;
         this.department = department;
@@ -150,16 +148,8 @@ public class Employee implements Serializable {
 
     public void setEmail(String email){this.email=email;}
 
-    public String getEmail(String email){return email;}
+    public String getEmail(){return email;}
 
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 }

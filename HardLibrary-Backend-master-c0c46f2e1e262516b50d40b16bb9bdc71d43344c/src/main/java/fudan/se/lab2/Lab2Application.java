@@ -17,6 +17,7 @@ public class Lab2Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Lab2Application.class, args);
+        System.out.println("命令行版数据库展示，请输入你的身份（employee/admin）");
     }
 
     /**

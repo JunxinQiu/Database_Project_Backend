@@ -36,7 +36,6 @@ public class Utility {
                 employee.setLocation(resultSet.getString("location"));
                 employee.setSex(resultSet.getString("sex"));
                 employee.setTelephoneNumber(resultSet.getString("telephone_number"));
-                employee.setType(resultSet.getString("type"));
                 return employee;
             }
         });
@@ -65,7 +64,6 @@ public class Utility {
                 employee.setLocation(resultSet.getString("location"));
                 employee.setSex(resultSet.getString("sex"));
                 employee.setTelephoneNumber(resultSet.getString("telephone_number"));
-                employee.setType(resultSet.getString("type"));
                 return employee;
             }
         });
