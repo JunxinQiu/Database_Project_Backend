@@ -1,6 +1,7 @@
 package fudan.se.lab2.security.jwt;
 
 import fudan.se.lab2.domain.Employee;
+import fudan.se.lab2.domain.Admin;
 import fudan.se.lab2.service.Utility;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -48,7 +49,27 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS512, jwtConfigProperties.getSecret()).compact();
     }
 
+    public String generateAdminToken(Admin admin) {
+        Map<String, Object> claims = new HashMap<>();
+        return Jwts.builder().addClaims(claims)
+                .setSubject(admin.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfigProperties.getValidity()))
+                .signWith(SignatureAlgorithm.HS512, jwtConfigProperties.getSecret()).compact();
+    }
+
     public Employee getEmployeeFromToken(String token) {
+        String username = this.getUsernameFromToken(token);
+        //sql:SELECT * FROM `employee` WHERE `username` = ''
+        Employee employee = utility.findEmployeeByUsername(username);
+        if (validateEmployeeToken(token,employee)){
+            return employee;
+        }else{
+            return null;
+        }
+    }
+
+    public Employee getAdminFromToken(String token) {
         String username = this.getUsernameFromToken(token);
         //sql:SELECT * FROM `employee` WHERE `username` = ''
         Employee employee = utility.findEmployeeByUsername(username);

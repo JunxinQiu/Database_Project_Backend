@@ -14,20 +14,18 @@ public class TestHistory {
     private int belongTo;
     private int grade;
     private String lesson;
-    @Column(name="is_passed")
-    private String isPassed;
-    @Column(name="is_finished")
-    private String isFinished;
+    private String date;
+    private String status;
 
     public TestHistory(){}
-    public TestHistory(int id,String name,int belongTo,int grade,String lesson,String isPassed,String isFinished){
+    public TestHistory(int id,String name,int belongTo,int grade,String lesson,String isPassed,String isFinished,String date,String status){
         this.id = id;
         this.name = name;
         this.belongTo = belongTo;
         this.grade = grade;
         this.lesson = lesson;
-        this.isFinished = isFinished;
-        this.isPassed = isPassed;
+        this.status = status;
+        this.date = date;
     }
 
     public void setName(String name) {
@@ -54,12 +52,12 @@ public class TestHistory {
         return grade;
     }
 
-    public String getIsFinished() {
-        return isFinished;
+    public String getStatus() {
+        return status;
     }
 
-    public String getIsPassed() {
-        return isPassed;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getLesson() {
@@ -74,15 +72,15 @@ public class TestHistory {
         this.grade = grade;
     }
 
-    public void setIsFinished(String isFinished) {
-        this.isFinished = isFinished;
-    }
-
-    public void setIsPassed(String isPassed) {
-        this.isPassed = isPassed;
-    }
-
     public void setLesson(String lesson) {
         this.lesson = lesson;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getDate() {
+        return date;
     }
 }

@@ -21,14 +21,11 @@ public class Department {
     @Column(unique = true)
     private String name;
     private String manager;
-    @Column(name="assigned_course")
-    private String assignedCourse;
 
     public Department(){}
     public Department(String name,String manager,String assignedCourse){
         this.name = name;
         this.manager = manager;
-        this.assignedCourse = assignedCourse;
     }
 
     public String getName() {
@@ -39,16 +36,8 @@ public class Department {
         return id;
     }
 
-    public String getAssignedCourse() {
-        return assignedCourse;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setAssignedCourse(String assignedCourse) {
-        this.assignedCourse = assignedCourse;
     }
 
     public void setManager(String manager) {

@@ -1,5 +1,6 @@
 package fudan.se.lab2.service;
 
+import fudan.se.lab2.domain.Admin;
 import fudan.se.lab2.domain.Employee;
 import fudan.se.lab2.domain.LogHistory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -74,6 +75,26 @@ public class Utility {
         }
     }
 
+    public Admin findAdminByUsername(String username){
+        String sql = "SELECT * FROM `employee` WHERE `username` = '"+username+"'";
+        List<Admin> adminList =jdbcTemplate.query(sql, new RowMapper<Admin>() {
+            Admin admin;
+            @Override
+            public Admin mapRow(ResultSet resultSet, int i) throws SQLException {
+                admin =new Admin();
+                admin.setPassword(resultSet.getString("password"));
+                admin.setUsername(resultSet.getString("username"));
+                admin.setId(resultSet.getLong("id"));
+                return admin;
+            }
+        });
+        if(adminList.size()>0){
+            return adminList.get(0);
+        }else{
+            return null;
+        }
+    }
+
     //查看log所需的方法
     public List<LogHistory> checkLog(){
         String sql = "SELECT * FROM `log_history`";
@@ -100,8 +121,14 @@ public class Utility {
     }
 
     public String getCurrentDate(){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(new Date());
+    }
+
+    public String updateEmployeeInfo(long id,String password,String email,int age, String location,String sex,String telephoneNumber) {
+        String sql = "UPDATE `employee` SET `password` = '"+password+"', `sex` = '"+sex+"', `telephone_number` = '"+telephoneNumber+"', `age` = '"+age+"', `location` = '"+location+"', `email` = '"+email+"' WHERE `employee`.`id` = "+id;
+        jdbcTemplate.update(sql);
+        return "修改成功";
     }
 
 
