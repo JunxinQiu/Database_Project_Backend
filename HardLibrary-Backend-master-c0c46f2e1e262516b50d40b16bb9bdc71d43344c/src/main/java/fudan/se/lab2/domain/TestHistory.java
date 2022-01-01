@@ -9,31 +9,35 @@ public class TestHistory {
     @Column(unique = true)
     @Id
     private int id;
-    private String name;
+    @Column(name="tutor_name")
+    private String tutorName;
     @Column(name="belong_to")
     private int belongTo;
     private int grade;
     private String lesson;
+    @Column(name="lesson_id")
+    private Long lessonId;
     private String date;
     private String status;
 
     public TestHistory(){}
-    public TestHistory(int id,String name,int belongTo,int grade,String lesson,String isPassed,String isFinished,String date,String status){
+    public TestHistory(int id,String name,Long lessonId,int belongTo,int grade,String lesson,String isPassed,String isFinished,String date,String status){
         this.id = id;
-        this.name = name;
+        this.tutorName = name;
         this.belongTo = belongTo;
         this.grade = grade;
         this.lesson = lesson;
         this.status = status;
         this.date = date;
+        this.lessonId = lessonId;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.tutorName = name;
     }
 
-    public String getName() {
-        return name;
+    public String getTutorName() {
+        return tutorName;
     }
 
     public void setId(int id) {
@@ -82,5 +86,13 @@ public class TestHistory {
 
     public String getDate() {
         return date;
+    }
+
+    public void setLessonId(Long lessonId) {
+        this.lessonId = lessonId;
+    }
+
+    public Long getLessonId() {
+        return lessonId;
     }
 }

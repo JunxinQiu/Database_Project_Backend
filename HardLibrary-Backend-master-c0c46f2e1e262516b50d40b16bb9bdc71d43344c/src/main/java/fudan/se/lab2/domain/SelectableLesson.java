@@ -7,26 +7,26 @@ public class SelectableLesson {
     @Column(unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    @Column(name="department_name")
-    private String departmentName;
+    private Long id;
+    @Column(name="department_id")
+    private Long departmentId;
     @Column(name="lesson_id")
-    private long lessonId;
+    private Long lessonId;
     private String type;
 
     public SelectableLesson(){}
-    public SelectableLesson(int id, String departmentName, long lessonId, String type){
+    public SelectableLesson(long id, Long departmentId, long lessonId, String type){
         this.id = id;
-        this.departmentName = departmentName;
+        this.departmentId = departmentId;
         this.lessonId = lessonId;
         this.type = type;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -34,16 +34,16 @@ public class SelectableLesson {
         return lessonId;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public Long getDepartmentId() {
+        return departmentId;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public void setLessonId(long lessonId) {

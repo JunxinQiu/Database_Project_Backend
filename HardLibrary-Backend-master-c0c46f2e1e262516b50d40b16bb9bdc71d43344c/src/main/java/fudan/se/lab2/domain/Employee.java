@@ -14,14 +14,17 @@ public class Employee implements Serializable {
     private static final long serialVersionUID = -6140085056226164016L;
 
     @Id
-    private long id;
+    private Long id;
 
     @Column(unique = true)
     private String username;
     private String password;
     private String name;
     private String email;
-    private String department;
+    @Column(name="department_id")
+    private Long departmentId;
+    @Column(name="department_name")
+    private String departmentName;
     private String sex;
     private String location;
     @Column(name="employ_date")
@@ -34,18 +37,19 @@ public class Employee implements Serializable {
     public Employee() {}
 
 
-    public Employee(int id,int age,String username, String password, String name,String email,String department,String sex,String employDate,String location,String telephoneNumber) {
+    public Employee(long id,int age,String departmentName,String username, String password, String name,String email,Long departmentId,String sex,String employDate,String location,String telephoneNumber) {
         this.username = username;
         this.password= password;
         this.name = name;
         this.email=email;
         this.age=age;
         this.id =id;
-        this.department = department;
+        this.departmentId = departmentId;
         this.location = location;
         this.sex = sex;
         this.employDate = employDate;
         this.telephoneNumber = telephoneNumber;
+        this.departmentName = departmentName;
     }
 
 
@@ -77,6 +81,14 @@ public class Employee implements Serializable {
         this.employDate = employDate;
     }
 
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
     public int getAge() {
         return age;
     }
@@ -85,12 +97,16 @@ public class Employee implements Serializable {
         this.age = age;
     }
 
-    public String getDepartment(){
-        return department;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setDepartment(String department) {
-        this.department = department;
+    public Long getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
     }
 
     public String getLocation() {

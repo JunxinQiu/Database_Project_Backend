@@ -20,12 +20,13 @@ public class Department {
 
     @Column(unique = true)
     private String name;
-    private String manager;
+
+    private long managerId;
 
     public Department(){}
-    public Department(String name,String manager,String assignedCourse){
+    public Department(String name,long managerId,String assignedCourse){
         this.name = name;
-        this.manager = manager;
+        this.managerId = managerId;
     }
 
     public String getName() {
@@ -40,8 +41,16 @@ public class Department {
         this.name = name;
     }
 
-    public void setManager(String manager) {
-        this.manager = manager;
+    public long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(long managerId) {
+        this.managerId = managerId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
 
