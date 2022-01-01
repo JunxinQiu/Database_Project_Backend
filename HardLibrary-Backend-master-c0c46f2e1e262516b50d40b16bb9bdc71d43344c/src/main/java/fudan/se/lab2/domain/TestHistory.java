@@ -8,11 +8,11 @@ import javax.persistence.Id;
 public class TestHistory {
     @Column(unique = true)
     @Id
-    private int id;
+    private Long id;
     @Column(name="tutor_name")
     private String tutorName;
     @Column(name="belong_to")
-    private int belongTo;
+    private Long belongTo;
     private int grade;
     private String lesson;
     @Column(name="lesson_id")
@@ -21,7 +21,7 @@ public class TestHistory {
     private String status;
 
     public TestHistory(){}
-    public TestHistory(int id,String name,Long lessonId,int belongTo,int grade,String lesson,String isPassed,String isFinished,String date,String status){
+    public TestHistory(Long id,String name,Long lessonId,Long belongTo,int grade,String lesson,String isPassed,String isFinished,String date,String status){
         this.id = id;
         this.tutorName = name;
         this.belongTo = belongTo;
@@ -40,15 +40,15 @@ public class TestHistory {
         return tutorName;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public int getBelongTo() {
+    public Long getBelongTo() {
         return belongTo;
     }
 
@@ -68,7 +68,7 @@ public class TestHistory {
         return lesson;
     }
 
-    public void setBelongTo(int belongTo) {
+    public void setBelongTo(Long belongTo) {
         this.belongTo = belongTo;
     }
 

@@ -75,5 +75,26 @@ public class TutorController {
         }
     }
 
+    //教员给学员评分
+    @PostMapping("/ratetest")
+    @ResponseBody
+    public ResponseEntity<?> rateTest(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        long id =  Long.parseLong(request.get("id"));
+        int score = Integer.parseInt(request.get("grade"));
+        String status;
+        if(score >=60){
+            status = "已通过";
+        }else{
+            status = "不合格";
+        }
+        if(employee.getId() == utility.getTutorFromTestHistory(id).getId()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(tutorService.rateTest(id,score,status));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应的权限");
+        }
+    }
+
 
 }

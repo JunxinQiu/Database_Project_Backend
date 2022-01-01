@@ -74,6 +74,11 @@ public class TutorService {
         return "已自动为部门员工分配必修课程";
     }
 
+    public String rateTest(Long id,int score,String status){
+        String sql = "UPDATE `test_history` SET `grade` = '"+score+"', `status` = '"+status+"' WHERE `test_history`.`id` = "+id;
+        jdbcTemplate.update(sql);
+        return "已完成成绩的登入";
+    }
 
 
 
