@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 @Service
 public class Utility {
@@ -265,7 +266,37 @@ public class Utility {
         });
         Employee employee = findEmployeeByName(testHistoryList.get(0).getTutorName());
         return employee;
+    }
 
+    public List<TestHistory> getTestHistoryListFromTestHistorybyTutoridAndLessonId(Long lessonId,String tutorName){
+        String sql = "SELECT * FROM `test_history` WHERE `tutor_name` = '"+tutorName+"' AND `lesson_id` = "+lessonId;
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+    public List<Employee> getEmployeeListFromTestHistoryList(List<TestHistory> testHistoryList){
+        List<Employee> employeeList = new ArrayList<>();
+        testHistoryList.forEach(new Consumer<TestHistory>() {
+            @Override
+            public void accept(TestHistory testHistory) {
+                Employee employee = findEmployeeById(testHistory.getBelongTo());
+                employee.setPassword("密码不可见");
+                employeeList.add(employee);
+            }
+        });
+        return employeeList;
     }
 
 

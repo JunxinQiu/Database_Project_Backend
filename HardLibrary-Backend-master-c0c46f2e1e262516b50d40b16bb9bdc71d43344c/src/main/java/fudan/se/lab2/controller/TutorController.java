@@ -90,11 +90,23 @@ public class TutorController {
             status = "不合格";
         }
         if(employee.getId() == utility.getTutorFromTestHistory(id).getId()){
+            utility.updateLog(employee.getUsername(),"update test grade for id"+id, utility.getCurrentDate());
             return ResponseEntity.status(HttpStatus.CREATED).body(tutorService.rateTest(id,score,status));
         }else{
             return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应的权限");
         }
     }
+
+    @PostMapping("/checkstudentinfo")
+    @ResponseBody
+    public ResponseEntity<?> checkStudentInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        long lessonId =  Long.parseLong(request.get("lessonId"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.getEmployeeListFromTestHistoryList(utility.getTestHistoryListFromTestHistorybyTutoridAndLessonId(lessonId,employee.getName())));
+    }
+
+
 
 
 }
