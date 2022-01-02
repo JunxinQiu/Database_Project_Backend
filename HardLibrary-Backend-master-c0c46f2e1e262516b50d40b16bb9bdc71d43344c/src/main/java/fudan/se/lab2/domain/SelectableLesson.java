@@ -13,13 +13,16 @@ public class SelectableLesson {
     @Column(name="lesson_id")
     private Long lessonId;
     private String type;
+    @Column(name="lesson_name")
+    private String lessonName;
 
     public SelectableLesson(){}
-    public SelectableLesson(long id, Long departmentId, long lessonId, String type){
+    public SelectableLesson(long id, Long departmentId, long lessonId, String type,String lessonName){
         this.id = id;
         this.departmentId = departmentId;
         this.lessonId = lessonId;
         this.type = type;
+        this.lessonName = lessonName;
     }
 
     public Long getId() {
@@ -54,4 +57,11 @@ public class SelectableLesson {
         this.type = type;
     }
 
+    public String getLessonName() {
+        return lessonName;
+    }
+
+    public void setLessonName(String lessonName) {
+        this.lessonName = lessonName;
+    }
 }

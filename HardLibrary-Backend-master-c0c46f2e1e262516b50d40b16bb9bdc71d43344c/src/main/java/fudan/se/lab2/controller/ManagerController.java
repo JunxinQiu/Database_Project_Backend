@@ -63,5 +63,17 @@ public class ManagerController {
         }
     }
 
+    //主管查看自己部门必修与选修课
+    @PostMapping("/checkdepartmentlesson")
+    @ResponseBody
+    public ResponseEntity<?> checkDepartmentLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        if(utility.isManager(employee,employee.getDepartmentId()).equals("yes")){
+            return ResponseEntity.status(HttpStatus.CREATED).body(utility.findSelectableLessonByDepartmentId(employee.getDepartmentId()));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
 
 }

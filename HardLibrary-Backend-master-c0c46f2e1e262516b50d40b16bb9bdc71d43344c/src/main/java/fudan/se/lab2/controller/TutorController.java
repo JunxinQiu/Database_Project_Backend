@@ -65,9 +65,9 @@ public class TutorController {
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
         if(utility.isTutor(employee).equals("yes")){
             tutorService.createNewLesson(id,name,employee.getId(),genre,description);
-            tutorService.handoutLessontoDepartment(requiredDepartmentList,id,"必修");
+            tutorService.handoutLessontoDepartment(requiredDepartmentList,id,"必修",name);
             tutorService.handoutLessontoEmployee(requiredDepartmentList,id,name,employee.getId());
-            tutorService.handoutLessontoDepartment(availableDepartmentList,id,"选修");
+            tutorService.handoutLessontoDepartment(availableDepartmentList,id,"选修",name);
             utility.updateLog(employee.getUsername(),"create new lesson",utility.getCurrentDate());
             return ResponseEntity.status(HttpStatus.CREATED).body("在输入参数正确的情况下，已完成新课程的创建");
         }else{

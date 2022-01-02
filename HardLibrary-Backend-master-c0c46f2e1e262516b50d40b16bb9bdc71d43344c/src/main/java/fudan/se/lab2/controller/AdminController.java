@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     //管理员修改员工个人信息,未完成
-    @PostMapping("/updateemployeeinfo")
+    @PostMapping("/adminupdateemployeeinfo")
     @ResponseBody
     public ResponseEntity<?> updateSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
         String token = headers.get("authorization");
@@ -81,6 +81,13 @@ public class AdminController {
         String result = employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber);
         String updateLog = utility.updateLog(employee.getUsername(),"admin update employee info", utility.getCurrentDate());
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    //管理员查看log
+    @PostMapping("/adminchecklog")
+    @ResponseBody
+    public ResponseEntity<?> adminCheckLog(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.checkLog());
     }
 
 }

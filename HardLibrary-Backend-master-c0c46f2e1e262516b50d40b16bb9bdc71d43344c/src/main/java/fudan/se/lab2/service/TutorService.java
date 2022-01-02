@@ -46,9 +46,9 @@ public class TutorService {
         return "已成功上传";
     }
 
-    public String handoutLessontoDepartment(ArrayList<Long> department_list, Long lessonId, String type){
+    public String handoutLessontoDepartment(ArrayList<Long> department_list, Long lessonId, String type,String lessonName){
         for(Long department_id:department_list){
-            String sql = "INSERT INTO `selectable_lesson` (`lesson_id`, `department_id`, `type`) VALUES ('"+lessonId+"', '"+department_id+"', '"+type+"')";
+            String sql = "INSERT INTO `selectable_lesson` (`lesson_id`, `department_id`, `type`,`lesson_name`) VALUES ('"+lessonId+"', '"+department_id+"', '"+type+"','"+lessonName+"')";
             jdbcTemplate.update(sql);
         }
         return "已自动为部门分配"+type+"课程";

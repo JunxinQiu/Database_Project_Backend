@@ -181,6 +181,24 @@ public class Utility {
         }
     }
 
+    public List<SelectableLesson> findSelectableLessonByDepartmentId(long departmentId){
+        String sql= "SELECT * FROM `selectable_lesson` WHERE `department_id` = "+departmentId;
+        List<SelectableLesson> selectableLessons = jdbcTemplate.query(sql, new RowMapper<SelectableLesson>() {
+            SelectableLesson selectableLesson;
+            @Override
+            public SelectableLesson mapRow(ResultSet resultSet, int i) throws SQLException {
+                selectableLesson = new SelectableLesson();
+                selectableLesson.setDepartmentId(departmentId);
+                selectableLesson.setId(resultSet.getLong("id"));
+                selectableLesson.setLessonId(resultSet.getLong("lesson_id"));
+                selectableLesson.setType(resultSet.getString("type"));
+                selectableLesson.setLessonName(resultSet.getString("lesson_name"));
+                return selectableLesson;
+            }
+        });
+        return selectableLessons;
+    }
+
     public String isTutor(Employee employee){
         long employee_id = employee.getId();
         String sql= "SELECT * FROM `tutor` WHERE `id` = "+employee_id;
