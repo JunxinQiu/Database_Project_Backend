@@ -1,6 +1,7 @@
 package fudan.se.lab2.controller;
 
 import fudan.se.lab2.domain.Employee;
+import fudan.se.lab2.domain.TestHistory;
 import fudan.se.lab2.security.jwt.JwtTokenUtil;
 import fudan.se.lab2.service.AuthService;
 import fudan.se.lab2.service.EmployeeService;
@@ -91,9 +92,9 @@ public class EmployeeController {
     }
 
     //员工查看个人课程
-    @PostMapping("/checkselflesson")
+    @PostMapping("/checkselftest")
     @ResponseBody
-    public ResponseEntity<?> checkSelfLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+    public ResponseEntity<?> checkSelfTest(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
         String token = headers.get("authorization");
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(utility.getTestHistoryListFromTestHistorybyEmployeeId(employee.getId()));
@@ -107,6 +108,16 @@ public class EmployeeController {
         Long id = Long.valueOf(request.get("id"));
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
         return ResponseEntity.status(HttpStatus.CREATED).body(utility.getTutorFromTestHistory(id));
+    }
+
+    //员工查看个人课程
+    @PostMapping("/checkselflesson")
+    @ResponseBody
+    public ResponseEntity<?> checkSelfLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        List<TestHistory> historyList = utility.getTestHistoryListFromTestHistorybyEmployeeId(employee.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.getLessonListFromTestHistoryList(historyList));
     }
 
 

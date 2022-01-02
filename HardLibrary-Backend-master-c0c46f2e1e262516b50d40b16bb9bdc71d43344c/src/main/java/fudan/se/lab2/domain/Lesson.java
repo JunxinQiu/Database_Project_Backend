@@ -7,7 +7,7 @@ public class Lesson {
     @Column(unique = true)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
     private String name;
     @Column(name="teacher_id")
     private long teacherId;
@@ -15,7 +15,7 @@ public class Lesson {
     private String genre;
 
     public Lesson(){}
-    public Lesson(int id,String name,long teacherId,String description,String genre){
+    public Lesson(Long id,String name,long teacherId,String description,String genre){
         this.id = id;
         this.name = name;
         this.teacherId = teacherId;
@@ -42,11 +42,11 @@ public class Lesson {
         this.name = name;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

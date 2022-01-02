@@ -307,6 +307,28 @@ public class Utility {
         return employee;
     }
 
+    public Lesson findLessonById(Long id){
+        String sql = "SELECT * FROM `lesson` WHERE `id` = "+id;
+        List<Lesson> lessonList = jdbcTemplate.query(sql, new RowMapper<Lesson>() {
+            Lesson lesson;
+            @Override
+            public Lesson mapRow(ResultSet resultSet, int i) throws SQLException {
+                lesson = new Lesson();
+                lesson.setDescription(resultSet.getString("description"));
+                lesson.setGenre(resultSet.getString("genre"));
+                lesson.setId(resultSet.getLong("id"));
+                lesson.setTeacherId(resultSet.getLong("teacher_id"));
+                lesson.setName(resultSet.getString("name"));
+                return lesson;
+            }
+        });
+        if(lessonList.size()>0){return lessonList.get(0);}
+        else{
+            return null;
+        }
+
+    }
+
     public List<TestHistory> getTestHistoryListFromTestHistorybyTutoridAndLessonId(Long lessonId,String tutorName){
         String sql = "SELECT * FROM `test_history` WHERE `tutor_name` = '"+tutorName+"' AND `lesson_id` = "+lessonId;
         List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
@@ -325,7 +347,7 @@ public class Utility {
         return testHistoryList;
     }
 
-    //查看某人的课程详情使用
+    //查看某人的考试详情使用
     public List<TestHistory> getTestHistoryListFromTestHistorybyEmployeeId(Long EmployeeId){
         String sql = "SELECT * FROM `test_history` WHERE `belong_to` = "+EmployeeId;
         List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
@@ -344,6 +366,32 @@ public class Utility {
             }
         });
         return testHistoryList;
+    }
+
+    //查看考试详情对应的课程具体信息
+    public List<Lesson> getLessonListFromTestHistoryList(List<TestHistory> testHistoryList){
+        List<Long> idList= new ArrayList<>();
+        List<Lesson> lessonList = new ArrayList<>();
+        for(int i=0;i<testHistoryList.size();i++){
+            idList.add(testHistoryList.get(i).getLessonId());
+        }
+        List<Long> finalIdList = removeDuplicate(idList);
+        for(int i=0;i<finalIdList.size();i++){
+            lessonList.add(findLessonById(finalIdList.get(i)));
+        }
+        return lessonList;
+    }
+
+    //删除list中重复的元素
+    public List<Long> removeDuplicate(List<Long> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = list.size() - 1; j > i; j--) {
+                if (list.get(j).equals(list.get(i))) {
+                    list.remove(j);
+                }
+            }
+        }
+        return list;
     }
 
     //获取选课人的信息
