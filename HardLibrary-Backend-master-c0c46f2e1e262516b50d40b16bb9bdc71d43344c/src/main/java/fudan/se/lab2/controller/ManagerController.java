@@ -30,7 +30,7 @@ import java.util.Map;
  * @author LBW
  */
 @Controller
-public class AdminController {
+public class ManagerController {
 
     private AuthService authService;
     private EmployeeService employeeService;
@@ -42,7 +42,7 @@ public class AdminController {
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
-    public AdminController(AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil) {
+    public ManagerController(AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil) {
         this.authService = authService;
         this.utility = utility;
         this.jwtTokenUtil = jwtTokenUtil;
@@ -50,37 +50,18 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-
-
-    //登录方法
-    @PostMapping("/adminlogin")
+    //主管查看自己部门所有员工的信息
+    @PostMapping("/checkemployeeinfo")
     @ResponseBody
-    public ResponseEntity<?> login(@RequestBody Map<String,String> request) throws JSONException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.adminLogin(request.get("username"),request.get("password")));
-    }
-
-    //管理员修改员工个人信息,未完成
-    @PostMapping("/updateemployeeinfo")
-    @ResponseBody
-    public ResponseEntity<?> updateSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+    public ResponseEntity<?> checkSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
         String token = headers.get("authorization");
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
-        //暂时不允许修改username
-        //String username = request.get("username");
-        String password = request.get("password");
-        //不允许修改name
-        String email = request.get("email");
-        //不允许修改type
-        int age = Integer.parseInt(request.get("age"));
-        //不允许修改id
-        //不允许管理员修改自己的部门
-        String location = request.get("location");
-        String sex = request.get("sex");
-        //不允许修改入职日期
-        String telephoneNumber = request.get("telephoneNumber");
-        String result = employeeService.updateInfo(employee.getId(),password,email,age,location,sex,telephoneNumber);
-        String updateLog = utility.updateLog(employee.getUsername(),"admin update employee info", utility.getCurrentDate());
-        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        if(utility.isManager(employee,employee.getDepartmentId()).equals("yes")){
+            return ResponseEntity.status(HttpStatus.CREATED).body(utility.getEmployeeListfromDepartmentID(employee.getDepartmentId()));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
     }
+
 
 }

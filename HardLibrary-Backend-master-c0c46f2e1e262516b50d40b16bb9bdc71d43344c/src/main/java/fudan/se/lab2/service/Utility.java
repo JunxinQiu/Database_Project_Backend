@@ -212,6 +212,7 @@ public class Utility {
         return result;
     }
 
+    //返回删掉教员和主管的属于某一部门的employee的list
     public List<Employee> getEmployeeListfromDepartmentIDandTutorId(Long departmentId,Long tutorId){
         String sql = "SELECT * FROM `employee` WHERE `department_id` = " + departmentId;
         List<Employee> employeeList = jdbcTemplate.query(sql, new RowMapper<Employee>() {
@@ -249,6 +250,43 @@ public class Utility {
         }
     }
 
+    //不删除tutor，返回一个部门除了主管的所有员工
+    public List<Employee> getEmployeeListfromDepartmentID(Long departmentId){
+        String sql = "SELECT * FROM `employee` WHERE `department_id` = " + departmentId;
+        List<Employee> employeeList = jdbcTemplate.query(sql, new RowMapper<Employee>() {
+            Employee employee;
+            @Override
+            public Employee mapRow(ResultSet resultSet, int i) throws SQLException {
+                employee=new Employee();
+                employee.setId(resultSet.getLong("id"));
+                employee.setPassword(resultSet.getString("password"));
+                employee.setUsername(resultSet.getString("username"));
+                employee.setName(resultSet.getString("name"));
+                employee.setAge(resultSet.getInt("age"));
+                employee.setDepartmentId(resultSet.getLong("department_id"));
+                employee.setDepartmentName(resultSet.getString("department_name"));
+                employee.setEmail(resultSet.getString("email"));
+                employee.setEmployDate(resultSet.getString("employ_date"));
+                employee.setLocation(resultSet.getString("location"));
+                employee.setSex(resultSet.getString("sex"));
+                employee.setTelephoneNumber(resultSet.getString("telephone_number"));
+                if( isManager(employee,departmentId).equals("yes")){
+                    return null;
+                }else{
+                    return employee;
+                }
+            }
+        });
+        //往list里面加null，size居然会增加，我以为无事发生呢
+        employeeList.removeAll(Collections.singleton(null));
+        employeeList.removeIf(Objects::isNull);
+        if(employeeList.size()>0){
+            return employeeList;
+        }else{
+            return null;
+        }
+    }
+
     public Employee getTutorFromTestHistory(Long id){
         String sql = "SELECT * FROM `test_history` WHERE `id` = "+id;
         List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
@@ -265,6 +303,7 @@ public class Utility {
             }
         });
         Employee employee = findEmployeeByName(testHistoryList.get(0).getTutorName());
+        employee.setPassword("密码不予显示");
         return employee;
     }
 
@@ -286,6 +325,28 @@ public class Utility {
         return testHistoryList;
     }
 
+    //查看某人的课程详情使用
+    public List<TestHistory> getTestHistoryListFromTestHistorybyEmployeeId(Long EmployeeId){
+        String sql = "SELECT * FROM `test_history` WHERE `belong_to` = "+EmployeeId;
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+    //获取选课人的信息
     public List<Employee> getEmployeeListFromTestHistoryList(List<TestHistory> testHistoryList){
         List<Employee> employeeList = new ArrayList<>();
         testHistoryList.forEach(new Consumer<TestHistory>() {

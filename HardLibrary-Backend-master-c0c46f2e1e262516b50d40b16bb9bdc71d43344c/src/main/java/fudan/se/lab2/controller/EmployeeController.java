@@ -90,13 +90,27 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    //教员创建新课程,未完成
-//    @PostMapping("/createlesson")
-//    @ResponseBody
-//    public ResponseEntity<?> CreateLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
-//        String token = headers.get("authorization");
-//        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
-//    }
+    //员工查看个人课程
+    @PostMapping("/checkselflesson")
+    @ResponseBody
+    public ResponseEntity<?> checkSelfLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.getTestHistoryListFromTestHistorybyEmployeeId(employee.getId()));
+    }
+
+    //员工查看个人课程对应的讲师的信息,需要id为入参
+    @PostMapping("/checkselflessontutor")
+    @ResponseBody
+    public ResponseEntity<?> checkSelfLessonTutor(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Long id = Long.valueOf(request.get("id"));
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.getTutorFromTestHistory(id));
+    }
+
+
+
 
 
     /**
