@@ -2,10 +2,7 @@ package fudan.se.lab2.controller;
 
 import fudan.se.lab2.domain.Employee;
 import fudan.se.lab2.security.jwt.JwtTokenUtil;
-import fudan.se.lab2.service.AdminService;
-import fudan.se.lab2.service.AuthService;
-import fudan.se.lab2.service.EmployeeService;
-import fudan.se.lab2.service.Utility;
+import fudan.se.lab2.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +34,19 @@ public class ManagerController {
     private Utility utility;
     private JwtTokenUtil jwtTokenUtil;//可能有bug
     private AdminService adminService;
+    private ManagerService managerService;
     Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
-    public ManagerController(AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil) {
+    public ManagerController(AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil,ManagerService managerService) {
         this.authService = authService;
         this.utility = utility;
         this.jwtTokenUtil = jwtTokenUtil;
         this.employeeService = employeeService;
         this.adminService = adminService;
+        this.managerService = managerService;
     }
 
     //主管查看自己部门所有员工的信息
@@ -113,13 +112,38 @@ public class ManagerController {
         Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
         Long id = Long.valueOf(request.get("id"));
         String password = request.get("password");
-        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
-            String result = employeeService.updatePassword(id,password);
-            String updateLog = utility.updateLog(manager.getUsername(),"update employee "+utility.findEmployeeById(id).getName()+" password", utility.getCurrentDate());
+        if (utility.isManager(manager, manager.getDepartmentId()).equals("yes")) {
+            String result = employeeService.updatePassword(id, password);
+            String updateLog = utility.updateLog(manager.getUsername(), "update employee " + utility.findEmployeeById(id).getName() + " password", utility.getCurrentDate());
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        }else{
+        } else {
             return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
         }
     }
+
+
+        //主管给自己部门的成员选课
+        //1 只能选自己部门可选的
+        //2 已经完成过的课程不能选
+        //3 正在修读未完成的课程不能选
+        @PostMapping("/managerchooseemployeelesson")
+        @ResponseBody
+        public ResponseEntity<?> managerChooseEmployeeLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+            String token = headers.get("authorization");
+            Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+            Long employeeId = Long.valueOf(request.get("employeeId"));//员工id
+            Long lessonId = Long.valueOf(request.get("lessonId"));
+            String lessonName = request.get("lessonName");
+            String tutorName = request.get("tutorName");
+            if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+                String result = managerService.managerChooseLesson(employeeId,lessonId,lessonName,manager.getDepartmentId(),tutorName);
+                String updateLog = utility.updateLog(manager.getUsername(),"update employee "+utility.findEmployeeById(employeeId).getName()+" lesson", utility.getCurrentDate());
+                return ResponseEntity.status(HttpStatus.CREATED).body(result);
+            }else{
+                return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+            }
+    }
+
+
 
 }
