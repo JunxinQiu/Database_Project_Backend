@@ -427,7 +427,56 @@ public class Utility {
         return employeeList;
     }
 
-    //
+    public String changeDepartment(Long employeeId,String departmentName,Long departmentId){
+        String sql = "UPDATE `employee` SET `department_id` = '"+departmentId+"', `department_name` = '"+departmentName+"' WHERE `employee`.`id` = "+employeeId;
+        jdbcTemplate.update(sql);
+        return "在保证数据输入正确的情况下，已经完成了调部门的操作";
+    }
+
+    public List<TestHistory> checkLessonStatus(Long employeeId, String status, Long lessonId){
+        String sql = "SELECT * FROM `test_history` WHERE `belong_to` = "+employeeId+" AND `lesson_id` = "+lessonId+" AND `status` = '"+status+"'";
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+    //检查一个员工是否修读了本专业所有必修课
+    public boolean passedAllRequiredTest(Long employeeId){
+        Employee employee = findEmployeeById(employeeId);
+        List<TestHistory> testHistoryList = getTestHistoryListFromTestHistorybyEmployeeId(employeeId);
+        List<SelectableLesson> selectableLessonList = findSelectableLessonByDepartmentId(employee.getDepartmentId());
+        if(selectableLessonList.size() == 0){
+            return true;
+        }else{
+            for(SelectableLesson x:selectableLessonList){
+                //只留下必修课的要求
+                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+                    selectableLessonList.remove(x);
+                }
+            }
+            if(selectableLessonList.size()==0){
+                return true;
+            }
+            boolean result = true;
+            for(SelectableLesson x:selectableLessonList){
+                if(checkLessonStatus(employeeId,"已通过",x.getLessonId()).size()!=1){
+                    result = false;
+                }
+            }
+            return result;
+        }
+    }
 
 
 
