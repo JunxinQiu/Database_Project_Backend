@@ -76,4 +76,50 @@ public class ManagerController {
         }
     }
 
+    //主管修改自己部门员工的信息(密码/部门/名字/username/入职日期/id不可修改)
+    @PostMapping("/updatedepartmentemployeeinfo")
+    @ResponseBody
+    public ResponseEntity<?> updateDepartmentEmployeeInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        Long id = Long.valueOf(request.get("id"));
+        //暂时不允许修改username
+        //String username = request.get("username");
+        String password = request.get("password");
+        //不允许修改name
+        String email = request.get("email");
+        //这个方法里不允许修改type，转部门属于另一个方法
+        int age = Integer.parseInt(request.get("age"));
+        //不允许修改id
+        //不允许自己修改自己的部门
+        String location = request.get("location");
+        String sex = request.get("sex");
+        //不允许修改入职日期
+        String telephoneNumber = request.get("telephoneNumber");
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            String result = employeeService.updateInfo(id,null,email,age,location,sex,telephoneNumber);
+            String updateLog = utility.updateLog(manager.getUsername(),"update employee "+utility.findEmployeeById(id).getName()+" info", utility.getCurrentDate());
+            return  ResponseEntity.status(HttpStatus.CREATED).body(result);
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+    //主管修改自己部门员工的密码
+    @PostMapping("/updateemployeepassword")
+    @ResponseBody
+    public ResponseEntity<?> updateEmployeeInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        Long id = Long.valueOf(request.get("id"));
+        String password = request.get("password");
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            String result = employeeService.updatePassword(id,password);
+            String updateLog = utility.updateLog(manager.getUsername(),"update employee "+utility.findEmployeeById(id).getName()+" password", utility.getCurrentDate());
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
 }

@@ -39,8 +39,21 @@ public class EmployeeService {
     this.jwtTokenUtil = jwtTokenUtil;
     }
 
+    //可以选择不修改密码
     public String updateInfo(long id,String password,String email,int age, String location,String sex,String telephoneNumber) {
-        String sql = "UPDATE `employee` SET `password` = '"+password+"', `sex` = '"+sex+"', `telephone_number` = '"+telephoneNumber+"', `age` = '"+age+"', `location` = '"+location+"', `email` = '"+email+"' WHERE `employee`.`id` = "+id;
+        if(password == null){
+            String sql = "UPDATE `employee` SET `sex` = '"+sex+"', `telephone_number` = '"+telephoneNumber+"', `age` = '"+age+"', `location` = '"+location+"', `email` = '"+email+"' WHERE `employee`.`id` = "+id;
+            jdbcTemplate.update(sql);
+            return "修改成功";
+        }else{
+            String sql = "UPDATE `employee` SET `password` = '"+password+"', `sex` = '"+sex+"', `telephone_number` = '"+telephoneNumber+"', `age` = '"+age+"', `location` = '"+location+"', `email` = '"+email+"' WHERE `employee`.`id` = "+id;
+            jdbcTemplate.update(sql);
+            return "修改成功";
+        }
+    }
+
+    public String updatePassword(long id,String password){
+        String sql = "UPDATE `employee` SET `password` = "+password;
         jdbcTemplate.update(sql);
         return "修改成功";
     }
