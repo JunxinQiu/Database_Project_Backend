@@ -52,7 +52,7 @@ public class ManagerController {
     //主管查看自己部门所有员工的信息
     @PostMapping("/checkemployeeinfo")
     @ResponseBody
-    public ResponseEntity<?> checkSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+    public ResponseEntity<?> checkEmployeeInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
         String token = headers.get("authorization");
         Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
         if(utility.isManager(employee,employee.getDepartmentId()).equals("yes")){
@@ -61,6 +61,43 @@ public class ManagerController {
             return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
         }
     }
+
+    //查看某一特定员工的信息
+    @PostMapping("/checkspecificemployeeinfo")
+    @ResponseBody
+    public ResponseEntity<?> checksSpecificEmployeeInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        Long employeeId = Long.valueOf(request.get("employeeId"));
+        if(utility.isManager(employee,employee.getDepartmentId()).equals("yes")){
+            if (utility.findEmployeeById(employeeId).getDepartmentId().equals(employee.getDepartmentId())) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(utility.findEmployeeById(employeeId));
+                }else {
+                return ResponseEntity.status(HttpStatus.CREATED).body("你与该员工不处于一个部门");
+            }
+            } else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+    @PostMapping("/checkspecificemployeetesthistory")
+    @ResponseBody
+    public ResponseEntity<?> checksSpecificEmployeeTestHistory(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee employee = jwtTokenUtil.getEmployeeFromToken(token);
+        Long employeeId = Long.valueOf(request.get("employeeId"));
+        if(utility.isManager(employee,employee.getDepartmentId()).equals("yes")){
+            if (utility.findEmployeeById(employeeId).getDepartmentId().equals(employee.getDepartmentId())) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(utility.getTestHistoryListFromTestHistorybyEmployeeId(employeeId));
+            }else {
+                return ResponseEntity.status(HttpStatus.CREATED).body("你与该员工不处于一个部门");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+
 
     //主管查看自己部门必修与选修课
     @PostMapping("/checkdepartmentlesson")

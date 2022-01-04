@@ -84,6 +84,7 @@ public class Utility {
                 employee=new Employee();
                 employee.setId(resultSet.getLong("id"));
                 employee.setPassword(resultSet.getString("password"));
+                employee.setPassword("密码不予显示");
                 employee.setUsername(resultSet.getString("username"));
                 employee.setName(resultSet.getString("name"));
                 employee.setAge(resultSet.getInt("age"));
