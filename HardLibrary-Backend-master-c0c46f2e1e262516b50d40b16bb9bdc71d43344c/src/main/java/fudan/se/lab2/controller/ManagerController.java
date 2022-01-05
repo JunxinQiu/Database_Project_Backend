@@ -1,6 +1,7 @@
 package fudan.se.lab2.controller;
 
 import fudan.se.lab2.domain.Employee;
+import fudan.se.lab2.domain.Lesson;
 import fudan.se.lab2.security.jwt.JwtTokenUtil;
 import fudan.se.lab2.service.*;
 import org.slf4j.Logger;
@@ -80,6 +81,7 @@ public class ManagerController {
         }
     }
 
+    //查看某个员工的testhistory
     @PostMapping("/checkspecificemployeetesthistory")
     @ResponseBody
     public ResponseEntity<?> checksSpecificEmployeeTestHistory(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
@@ -179,7 +181,81 @@ public class ManagerController {
             }else{
                 return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
             }
+        }
+
+
+        //返回需要修读的课程
+    @PostMapping("/changeemployeedepartment")
+    @ResponseBody
+    public ResponseEntity<?> changeEmployeeDepartment(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        Long employeeId = Long.valueOf(request.get("employeeId"));//员工id
+        Long departmentId = Long.valueOf(request.get("departmentId"));
+        String departmentName = request.get("departmentName");
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            if(utility.isSameDepartment(manager,utility.findEmployeeById(employeeId))){
+                if(utility.passedAllRequiredTest(employeeId) && !utility.hasfailTest(employeeId,departmentId)){
+                    String result = utility.changeDepartment(employeeId,departmentName,departmentId);
+                    String updateLog = utility.updateLog(manager.getUsername(),"change employee "+utility.findEmployeeById(employeeId).getName()+" department", utility.getCurrentDate());
+                    List<Lesson> resultSet = utility.passedAllRequiredTest(employeeId,departmentId);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(resultSet);
+                }else{
+                    return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限（该员工不符合要求）");
+                }
+            }else{
+                return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限（不在同一部门）");
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限(不是主管)");
+        }
     }
+
+    //查看某门课挂了n次的员工
+    @PostMapping("/checkfailedtimes")
+    @ResponseBody
+    public ResponseEntity<?> checkFailedTimes(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        Long lessonId = Long.valueOf(request.get("lessonId"));
+        int failedTimes = Integer.parseInt(request.get("failedTimes"));
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            return ResponseEntity.status(HttpStatus.CREATED).body(managerService.failedTest(lessonId,failedTimes,manager.getDepartmentId()));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+    //返回考试通过的员工成绩
+    @PostMapping("/checkpassemployee")
+    @ResponseBody
+    public ResponseEntity<?> checkPassEmployee(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            return ResponseEntity.status(HttpStatus.CREATED).body(managerService.checkPassEmployee(manager.getDepartmentId(),"已通过"));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+    //返回修读某一课程的员工成绩
+    @PostMapping("/checklessontest")
+    @ResponseBody
+    public ResponseEntity<?> checkEmployeeTestFromLesson(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        String token = headers.get("authorization");
+        Employee manager = jwtTokenUtil.getEmployeeFromToken(token);
+        Long lessonId = Long.valueOf(request.get("lessonId"));
+        if(utility.isManager(manager,manager.getDepartmentId()).equals("yes")){
+            return ResponseEntity.status(HttpStatus.CREATED).body(managerService.checkBylessonId(lessonId,manager.getDepartmentId()));
+        }else{
+            return ResponseEntity.status(HttpStatus.CREATED).body("你没有对应权限");
+        }
+    }
+
+
+
+
 
 
 

@@ -80,6 +80,59 @@ public class ManagerService {
         return "应该不会走到这里";
     }
 
+    public List<Employee> failedTest(long lessonId,int failTimes,Long departmentId){
+        List<Employee> employeeList = utility.getEmployeeListfromDepartmentID(departmentId);
+        List<TestHistory> testHistoryList = utility.getTestHistoryListFromTestHistorybyLessonIdandStatus(lessonId);
+        List<Employee> resultSet = new ArrayList<Employee>();
+        for (Employee employee: employeeList){
+            int currentFailTime = 0;
+            for(TestHistory testHistory: testHistoryList){
+                if(testHistory.getBelongTo() == employee.getId() && testHistory.getLessonId() == lessonId){
+                    failTimes+=1;
+                }
+            }
+            if(currentFailTime >= failTimes){
+                resultSet.add(employee);
+            }
+        }
+        return resultSet;
+    }
+
+    public List<TestHistory> checkBylessonId(long lessonId,Long deparmentId){
+        List<TestHistory> testHistoryList = utility.getTestHistoryListFromTestHistorybyLessonId(lessonId);
+//        for(TestHistory testHistory:testHistoryList){
+//            if(!utility.findEmployeeById(testHistory.getBelongTo()).getDepartmentId().equals(deparmentId)){
+//                testHistoryList.remove(testHistory);
+//            }
+//        }
+        Iterator<TestHistory> iter = testHistoryList.iterator();
+        while(iter.hasNext()){
+            TestHistory x = iter.next();
+            if(!utility.findEmployeeById(x.getBelongTo()).getDepartmentId().equals(deparmentId)){
+                iter.remove();
+            }
+        }
+        return testHistoryList;
+    }
+
+    public List<TestHistory> checkPassEmployee(Long deparmentId,String status){
+        List<TestHistory> testHistoryList = utility.getTestHistoryListFromTestHistorybyStatus(status);
+//        for(TestHistory testHistory:testHistoryList){
+//            if(!utility.findEmployeeById(testHistory.getBelongTo()).getDepartmentId().equals(deparmentId)){
+//                testHistoryList.remove(testHistory);
+//            }
+//        }
+        Iterator<TestHistory> iter = testHistoryList.iterator();
+        while(iter.hasNext()){
+            TestHistory x = iter.next();
+            if(!utility.findEmployeeById(x.getBelongTo()).getDepartmentId().equals(deparmentId)){
+                iter.remove();
+            }
+        }
+        return testHistoryList;
+    }
+
+
 
 
 //    public String updateEmployeeInfo(){

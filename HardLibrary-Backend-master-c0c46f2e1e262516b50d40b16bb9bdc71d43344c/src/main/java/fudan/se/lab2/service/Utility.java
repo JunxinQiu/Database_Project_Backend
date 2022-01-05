@@ -318,6 +318,9 @@ public class Utility {
                 testHistory.setGrade(resultSet.getInt("grade"));
                 testHistory.setId(resultSet.getLong("id"));
                 testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
                 return testHistory;
             }
         });
@@ -360,11 +363,79 @@ public class Utility {
                 testHistory.setGrade(resultSet.getInt("grade"));
                 testHistory.setId(resultSet.getLong("id"));
                 testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
                 return testHistory;
             }
         });
         return testHistoryList;
     }
+
+    public List<TestHistory> getTestHistoryListFromTestHistorybyStatus(String status){
+        String sql = "SELECT * FROM `test_history` WHERE `status` = "+"'"+status+"'";
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+    public List<TestHistory> getTestHistoryListFromTestHistorybyLessonId(Long lessonId){
+        String sql = "SELECT * FROM `test_history` WHERE `lesson_id` = "+lessonId;
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+    public List<TestHistory> getTestHistoryListFromTestHistorybyLessonIdandStatus(Long lessonId){
+        String sql = "SELECT * FROM `test_history` WHERE `lesson_id` = "+lessonId+" AND `status` = " + "'不合格'";
+        List<TestHistory> testHistoryList = jdbcTemplate.query(sql, new RowMapper<TestHistory>() {
+            TestHistory testHistory;
+            @Override
+            public TestHistory mapRow(ResultSet resultSet, int i) throws SQLException {
+                testHistory = new TestHistory();
+                testHistory.setBelongTo(resultSet.getLong("belong_to"));
+                testHistory.setDate(resultSet.getString("date"));
+                testHistory.setGrade(resultSet.getInt("grade"));
+                testHistory.setId(resultSet.getLong("id"));
+                testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
+                return testHistory;
+            }
+        });
+        return testHistoryList;
+    }
+
+
 
     //查看某人的考试详情使用
     public List<TestHistory> getTestHistoryListFromTestHistorybyEmployeeId(Long EmployeeId){
@@ -379,6 +450,7 @@ public class Utility {
                 testHistory.setGrade(resultSet.getInt("grade"));
                 testHistory.setId(resultSet.getLong("id"));
                 testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
                 testHistory.setLesson(resultSet.getString("lesson"));
                 testHistory.setLessonId(resultSet.getLong("lesson_id"));
                 return testHistory;
@@ -445,6 +517,9 @@ public class Utility {
                 testHistory.setGrade(resultSet.getInt("grade"));
                 testHistory.setId(resultSet.getLong("id"));
                 testHistory.setName(resultSet.getString("tutor_name"));
+                testHistory.setStatus(resultSet.getString("status"));
+                testHistory.setLesson(resultSet.getString("lesson"));
+                testHistory.setLessonId(resultSet.getLong("lesson_id"));
                 return testHistory;
             }
         });
@@ -459,10 +534,17 @@ public class Utility {
         if(selectableLessonList.size() == 0){
             return true;
         }else{
-            for(SelectableLesson x:selectableLessonList){
-                //只留下必修课的要求
+//            for(SelectableLesson x:selectableLessonList){
+//                //只留下必修课的要求
+//                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+//                    selectableLessonList.remove(x);
+//                }
+//            }
+            Iterator<SelectableLesson> iter = selectableLessonList.iterator();
+            while(iter.hasNext()){
+                SelectableLesson x = iter.next();
                 if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
-                    selectableLessonList.remove(x);
+                    iter.remove();
                 }
             }
             if(selectableLessonList.size()==0){
@@ -475,6 +557,83 @@ public class Utility {
                 }
             }
             return result;
+        }
+    }
+
+    //检查一个员工在要转入部门的必修课有没有挂科
+    public boolean hasfailTest(Long employeeId,Long departmentId){
+        Employee employee = findEmployeeById(employeeId);
+        List<TestHistory> testHistoryList = getTestHistoryListFromTestHistorybyEmployeeId(employeeId);
+        List<SelectableLesson> selectableLessonList = findSelectableLessonByDepartmentId(departmentId);
+        if(selectableLessonList.size() == 0){
+            return false;
+        }else{
+//            for(SelectableLesson x:selectableLessonList){
+//                //只留下必修课的要求
+//                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+//                    selectableLessonList.remove(x);
+//                }
+//            }
+            Iterator<SelectableLesson> iter = selectableLessonList.iterator();
+            while(iter.hasNext()){
+                SelectableLesson x = iter.next();
+                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+                    iter.remove();
+                }
+            }
+            if(selectableLessonList.size()==0){
+                return false;
+            }
+            boolean result = false;
+            for(SelectableLesson x:selectableLessonList){
+                if(checkLessonStatus(employeeId,"不合格",x.getLessonId()).size()==1){
+                    result = true;
+                }
+            }
+            return result;
+        }
+    }
+
+    //获取员工还需要读取一个部门的什么课
+    public List<Lesson> passedAllRequiredTest(Long employeeId,Long departmentId){
+        Employee employee = findEmployeeById(employeeId);
+        List<TestHistory> testHistoryList = getTestHistoryListFromTestHistorybyEmployeeId(employeeId);
+        List<SelectableLesson> selectableLessonList = findSelectableLessonByDepartmentId(departmentId);
+        if(selectableLessonList.size() == 0){
+            return new ArrayList<Lesson>();
+        }else{
+//            for(SelectableLesson x:selectableLessonList){
+//                //只留下必修课的要求
+//                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+//                    selectableLessonList.remove(x);
+//                }
+//            }
+            Iterator<SelectableLesson> iter = selectableLessonList.iterator();
+            while(iter.hasNext()){
+                SelectableLesson x = iter.next();
+                if(!x.getDepartmentId().equals(employee.getDepartmentId()) || !x.getType().equals("必修")){
+                    iter.remove();
+                }
+            }
+            if(selectableLessonList.size()==0){
+                return new ArrayList<Lesson>();
+            }
+            ArrayList<Lesson> resultSet = new ArrayList<Lesson>();
+            for(SelectableLesson x:selectableLessonList){
+                if(checkLessonStatus(employeeId,"已通过",x.getLessonId()).size()!=1){
+                    resultSet.add(findLessonById(x.getLessonId()));
+                }
+            }
+            return resultSet;
+        }
+    }
+
+    //检查两个员工在不在一个部门
+    public boolean isSameDepartment(Employee employee1,Employee employee2){
+        if(employee1.getDepartmentId().equals(employee2.getDepartmentId())){
+            return true;
+        }else{
+            return false;
         }
     }
 
