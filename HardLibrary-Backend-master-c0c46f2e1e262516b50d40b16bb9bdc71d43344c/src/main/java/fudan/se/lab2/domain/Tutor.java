@@ -27,6 +27,12 @@ public class Tutor {
         this.date = date;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id +" name : "+name+" date: "+date;
+    }
+
     public Long getId() {
         return id;
     }

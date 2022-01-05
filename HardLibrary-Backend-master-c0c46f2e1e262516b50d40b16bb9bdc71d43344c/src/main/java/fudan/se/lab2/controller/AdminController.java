@@ -2,10 +2,7 @@ package fudan.se.lab2.controller;
 
 import fudan.se.lab2.domain.Employee;
 import fudan.se.lab2.security.jwt.JwtTokenUtil;
-import fudan.se.lab2.service.AdminService;
-import fudan.se.lab2.service.AuthService;
-import fudan.se.lab2.service.EmployeeService;
-import fudan.se.lab2.service.Utility;
+import fudan.se.lab2.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,17 +34,19 @@ public class AdminController {
     private Utility utility;
     private JwtTokenUtil jwtTokenUtil;//可能有bug
     private AdminService adminService;
+    private TutorService tutorService;
     Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
-    public AdminController(AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil) {
+    public AdminController(TutorService tutorService,AuthService authService, Utility utility,EmployeeService employeeService,AdminService adminService,JwtTokenUtil jwtTokenUtil) {
         this.authService = authService;
         this.utility = utility;
         this.jwtTokenUtil = jwtTokenUtil;
         this.employeeService = employeeService;
         this.adminService = adminService;
+        this.tutorService = tutorService;
     }
 
 
@@ -59,7 +58,30 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.adminLogin(request.get("username"),request.get("password")));
     }
 
-    //管理员修改员工个人信息,未完成
+    //管理员查看log
+    @PostMapping("/adminchecklog")
+    @ResponseBody
+    public ResponseEntity<?> adminCheckLog(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+        return ResponseEntity.status(HttpStatus.CREATED).body(utility.checkLog());
+    }
+
+//    //管理员修改log
+//    @PostMapping("/adminupdatelog")
+//    @ResponseBody
+//    public ResponseEntity<?> adminUpdateLog(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(utility.updateLog());
+//    }
+    //管理员删除log
+
+    //管理员增加log
+
+    //管理员增加新员工（不触发自动选课）
+
+    //管理员删除员工（非常危险，因为我的外键设置可能会直接搞崩）
+
+    //管理员查询员工信息
+
+    //管理员修改员工个人信息
     @PostMapping("/adminupdateemployeeinfo")
     @ResponseBody
     public ResponseEntity<?> updateSelfInfo(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
@@ -83,11 +105,14 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    //管理员查看log
-    @PostMapping("/adminchecklog")
-    @ResponseBody
-    public ResponseEntity<?> adminCheckLog(@RequestBody Map<String,String> request,@RequestHeader Map<String, String> headers) throws JSONException {
-        return ResponseEntity.status(HttpStatus.CREATED).body(utility.checkLog());
-    }
+    //管理员增加课程
+
+    //管理员修改课程
+
+    //管理员查找课程
+
+    //管理员删除课程
+
+
 
 }

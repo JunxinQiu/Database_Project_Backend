@@ -17,6 +17,8 @@ public class Utility {
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
+
+
     public Employee findEmployeeByUsername(String username){
         String sql = "SELECT * FROM `employee` WHERE `username` = '"+username+"'";
         List<Employee> employeeList =jdbcTemplate.query(sql, new RowMapper<Employee>() {
@@ -147,7 +149,7 @@ public class Utility {
     public String updateLog(String username,String log,String date){
         String sql = "INSERT INTO `log_history` (`username`, `log`, `date`) VALUES ('"+username+"', '"+log+"', '"+date+"')";
         jdbcTemplate.update(sql);
-        return "log已经运行，在正确的输入下理论上会获得正确的结果";
+        return "log已经插入，在正确的输入下理论上会获得正确的结果";
     }
 
     public String getCurrentDate(){
@@ -270,7 +272,7 @@ public class Utility {
     }
 
     //不删除tutor，返回一个部门除了主管的所有员工
-    public List<Employee> getEmployeeListfromDepartmentID(Long departmentId){
+    public ArrayList<Employee> getEmployeeListfromDepartmentID(Long departmentId){
         String sql = "SELECT * FROM `employee` WHERE `department_id` = " + departmentId;
         List<Employee> employeeList = jdbcTemplate.query(sql, new RowMapper<Employee>() {
             Employee employee;
@@ -278,7 +280,7 @@ public class Utility {
             public Employee mapRow(ResultSet resultSet, int i) throws SQLException {
                 employee=new Employee();
                 employee.setId(resultSet.getLong("id"));
-                employee.setPassword(resultSet.getString("password"));
+                employee.setPassword("密码不予显示");
                 employee.setUsername(resultSet.getString("username"));
                 employee.setName(resultSet.getString("name"));
                 employee.setAge(resultSet.getInt("age"));
@@ -300,7 +302,7 @@ public class Utility {
         employeeList.removeAll(Collections.singleton(null));
         employeeList.removeIf(Objects::isNull);
         if(employeeList.size()>0){
-            return employeeList;
+            return (ArrayList<Employee>) employeeList;
         }else{
             return null;
         }

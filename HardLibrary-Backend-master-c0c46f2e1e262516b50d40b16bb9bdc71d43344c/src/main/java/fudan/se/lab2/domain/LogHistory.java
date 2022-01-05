@@ -20,6 +20,12 @@ public class LogHistory {
         this.date=date;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id +" username : "+username+" log: "+log+" date: "+date;
+    }
+
     public String getUsername() {
         return username;
     }

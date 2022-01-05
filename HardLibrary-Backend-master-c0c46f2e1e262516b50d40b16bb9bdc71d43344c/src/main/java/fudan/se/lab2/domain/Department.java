@@ -29,6 +29,12 @@ public class Department {
         this.managerId = managerId;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id + " managerId:" + managerId + " name:" + name;
+    }
+
     public String getName() {
         return name;
     }

@@ -52,6 +52,12 @@ public class Employee implements Serializable {
         this.departmentName = departmentName;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id + " username:" + username + " password:" + password + " name:" + name + " email:" + email+ " age:" + age+ " departmentId:" + departmentId+ " location:" + location+ " sex:" + sex+ " employDate:" + employDate+ " telephoneNumber:" + telephoneNumber+ " departmentId:" + departmentName;
+    }
+
 
     public String getPassword() {
         return password;
@@ -168,4 +174,6 @@ public class Employee implements Serializable {
 
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
     }
+
+
 }

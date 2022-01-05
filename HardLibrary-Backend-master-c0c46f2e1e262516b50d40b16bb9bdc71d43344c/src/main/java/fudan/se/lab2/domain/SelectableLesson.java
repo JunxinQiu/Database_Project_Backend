@@ -25,6 +25,12 @@ public class SelectableLesson {
         this.lessonName = lessonName;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id +" departmentId : "+departmentId+" lessonId: "+lessonId+" type: "+type+" lessonName: "+lessonName;
+    }
+
     public Long getId() {
         return id;
     }

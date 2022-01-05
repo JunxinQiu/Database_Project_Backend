@@ -33,7 +33,7 @@ public class ManagerController {
     private AuthService authService;
     private EmployeeService employeeService;
     private Utility utility;
-    private JwtTokenUtil jwtTokenUtil;//可能有bug
+    private JwtTokenUtil jwtTokenUtil;
     private AdminService adminService;
     private ManagerService managerService;
     Logger logger = LoggerFactory.getLogger(EmployeeController.class);

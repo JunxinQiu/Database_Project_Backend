@@ -23,6 +23,12 @@ public class Lesson {
         this.genre = genre;
     }
 
+    @Override
+    public String toString()
+    {
+        return "id : "+ id + " name:" + name + " teacherId:" + teacherId + " description:" + description + " genre:" + genre;
+    }
+
 
     public String getDescription() {
         return description;

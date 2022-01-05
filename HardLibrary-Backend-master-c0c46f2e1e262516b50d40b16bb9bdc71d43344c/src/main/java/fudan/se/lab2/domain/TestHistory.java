@@ -32,6 +32,13 @@ public class TestHistory {
         this.lessonId = lessonId;
     }
 
+
+    @Override
+    public String toString()
+    {
+        return "id : "+ id +" tutorName : "+tutorName+" lessonId: "+lessonId+" lesson: "+lesson+" belongTo: "+belongTo+" grade: "+grade+" status: "+status+" date: "+date;
+    }
+
     public void setName(String name) {
         this.tutorName = name;
     }

@@ -34,9 +34,10 @@ public class EmployeeService {
     @Resource
     private JdbcTemplate jdbcTemplate;//自动分析使用数据库
 
-    public EmployeeService(Utility utility,JwtTokenUtil jwtTokenUtil){
+    public EmployeeService(Utility utility,JwtTokenUtil jwtTokenUtil,JdbcTemplate jdbcTemplate){
     this.utility = utility;
     this.jwtTokenUtil = jwtTokenUtil;
+    this.jdbcTemplate = jdbcTemplate;
     }
 
     //可以选择不修改密码
